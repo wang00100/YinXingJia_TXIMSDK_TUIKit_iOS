@@ -65,7 +65,7 @@
             _pendencyViewModel = [TUIGroupPendencyViewModel new];
             _pendencyViewModel.groupId = _conversationData.groupID;
         }
-        
+
         self.atUserList = [NSMutableArray array];
     }
     return self;
@@ -100,7 +100,12 @@
     @weakify(self)
     //message
     _messageController = [[TUIMessageController alloc] init];
-    _messageController.view.frame = CGRectMake(0, 0, self.view.frame.size.width, self.view.frame.size.height - TTextView_Height - Bottom_SafeHeight);
+    //add by vince
+    if (self.isSystem){
+        _messageController.view.frame = CGRectMake(0, 0, self.view.frame.size.width, self.view.frame.size.height - Bottom_SafeHeight);
+    }else{
+        _messageController.view.frame = CGRectMake(0, 0, self.view.frame.size.width, self.view.frame.size.height - TTextView_Height - Bottom_SafeHeight);
+    }
     _messageController.delegate = self;
     [self addChildViewController:_messageController];
     [self.view addSubview:_messageController.view];
@@ -119,7 +124,7 @@
     [self.view addSubview:_inputController.view];
     _inputController.inputBar.inputTextView.text = self.conversationData.draftText;
     _inputController.view.hidden = self.isSystem;
-    
+
     self.tipsView = [[UIView alloc] initWithFrame:CGRectZero];
     self.tipsView.backgroundColor = RGB(246, 234, 190);
     [self.view addSubview:self.tipsView];
@@ -157,10 +162,10 @@
         }
     }];
     [self getPendencyList];
-    
+
     //监听入群请求通知
     [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(getPendencyList) name:TUIKitNotification_onReceiveJoinApplication object:nil];
-    
+
     //群 @ ,UI 细节比较多，放在二期实现
 //    if (self.conversationData.groupID.length > 0 && self.conversationData.atMsgSeqList.count > 0) {
 //        self.atBtn = [[UIButton alloc] initWithFrame:CGRectMake(self.view.mm_w - 100, 100, 100, 40)];
@@ -472,7 +477,7 @@
         [THelper makeToast:TUILocalizableString(TUIKitMicCamerAuthTips)];
         return;
     }
-    
+
     [[TUICallManager shareInstance] call:self.conversationData.groupID userID:self.conversationData.userID callType:CallType_Video];
 }
 
@@ -512,19 +517,19 @@
             NSData *data = UIImageJPEGRepresentation(image, 0.75);
             NSString *path = [TUIKit_Image_Path stringByAppendingString:[THelper genImageName:nil]];
             [[NSFileManager defaultManager] createFileAtPath:path contents:data attributes:nil];
-            
+
             TUIImageMessageCellData *uiImage = [[TUIImageMessageCellData alloc] initWithDirection:MsgDirectionOutgoing];
             uiImage.path = path;
             uiImage.length = data.length;
             [self sendMessage:uiImage];
-            
+
             if (self.delegate && [self.delegate respondsToSelector:@selector(chatController:didSendMessage:)]) {
                 [self.delegate chatController:self didSendMessage:uiImage];
             }
         }
         else if([mediaType isEqualToString:(NSString *)kUTTypeMovie]){
             NSURL *url = [info objectForKey:UIImagePickerControllerMediaURL];
-            
+
             if(![url.pathExtension  isEqual: @"mp4"]) {
                 NSString* tempPath = NSTemporaryDirectory();
                 NSURL *urlName = [url URLByDeletingPathExtension];
@@ -569,7 +574,7 @@
     NSData *videoData = [NSData dataWithContentsOfURL:url];
     NSString *videoPath = [NSString stringWithFormat:@"%@%@.mp4", TUIKit_Video_Path, [THelper genVideoName:nil]];
     [[NSFileManager defaultManager] createFileAtPath:videoPath contents:videoData attributes:nil];
-    
+
     NSDictionary *opts = [NSDictionary dictionaryWithObject:[NSNumber numberWithBool:NO] forKey:AVURLAssetPreferPreciseDurationAndTimingKey];
     AVURLAsset *urlAsset =  [AVURLAsset URLAssetWithURL:url options:opts];
     NSInteger duration = (NSInteger)urlAsset.duration.value / urlAsset.duration.timescale;
@@ -582,11 +587,11 @@
     CGImageRef imageRef = [gen copyCGImageAtTime:time actualTime:&actualTime error:&error];
     UIImage *image = [[UIImage alloc] initWithCGImage:imageRef];
     CGImageRelease(imageRef);
-    
+
     NSData *imageData = UIImagePNGRepresentation(image);
     NSString *imagePath = [TUIKit_Video_Path stringByAppendingString:[THelper genSnapshotName:nil]];
     [[NSFileManager defaultManager] createFileAtPath:imagePath contents:imageData attributes:nil];
-    
+
     TUIVideoMessageCellData *uiVideo = [[TUIVideoMessageCellData alloc] initWithDirection:MsgDirectionOutgoing];
     uiVideo.snapshotPath = imagePath;
     uiVideo.snapshotItem = [[TUISnapshotItem alloc] init];
@@ -600,7 +605,7 @@
     uiVideo.videoItem.type = url.pathExtension;
     uiVideo.uploadProgress = 0;
     [self sendMessage:uiVideo];
-    
+
     if (self.delegate && [self.delegate respondsToSelector:@selector(chatController:didSendMessage:)]) {
         [self.delegate chatController:self didSendMessage:uiVideo];
     }
@@ -631,7 +636,7 @@
             uiFile.length = (int)fileSize;
             uiFile.uploadProgress = 0;
             [self sendMessage:uiFile];
-            
+
             if (self.delegate && [self.delegate respondsToSelector:@selector(chatController:didSendMessage:)]) {
                 [self.delegate chatController:self didSendMessage:uiFile];
             }
