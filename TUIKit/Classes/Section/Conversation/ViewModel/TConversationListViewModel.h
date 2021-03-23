@@ -10,6 +10,7 @@
 
 NS_ASSUME_NONNULL_BEGIN
 
+
 /**
  * 【模块名称】消息列表视图模型（TConversationListViewModel）
  *
@@ -33,6 +34,13 @@ NS_ASSUME_NONNULL_BEGIN
  * 删除会话数据
  */
 - (void)removeData:(TUIConversationCellData *)data;
+
+
+//add bu vince 添加 需要过滤的
+
++(void)setFilterArray:(NSArray * _Nonnull)filterList;
+
++( NSArray * _Nullable )getFilterArray;
 
 @end
 

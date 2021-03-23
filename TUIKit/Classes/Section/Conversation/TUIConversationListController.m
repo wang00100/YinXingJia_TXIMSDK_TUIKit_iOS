@@ -52,6 +52,19 @@ static NSString *kConversationCell_ReuseId = @"TConversationCell";
     }
 }
 
+- (NSInteger)jk_integerForKey:(id)key for:(NSDictionary *)dic
+{
+    id value = [dic objectForKey:key];
+    if (value == nil || value == [NSNull null])
+    {
+        return 0;
+    }
+    if ([value isKindOfClass:[NSString class]] || [value isKindOfClass:[NSNumber class]])
+    {
+        return [value integerValue];
+    }
+    return 0;
+}
 
 -(NSMutableArray<TUIConversationCellData*> *)viewModelPerson{
     
@@ -59,11 +72,16 @@ static NSString *kConversationCell_ReuseId = @"TConversationCell";
     
     for (int _loc1 = 0; _loc1 < self.viewModel.dataList.count; _loc1 ++) {
         if (self.viewModel.dataList[_loc1].userID != nil ){
-            if ([self.viewModel.dataList[_loc1].userID isEqualToString:@"u18600663714"]){
+            NSMutableDictionary *yinxingData = self.viewModel.dataList[_loc1].yinxingData;
+            NSInteger iszgj = [self jk_integerForKey:@"iszgj" for:yinxingData];
+            if (iszgj == 1){
                 self.GuanJiaTop = self.viewModel.dataList[_loc1];
-                self.GuanJiaTop.yinxingData = [NSMutableDictionary dictionaryWithObject:@"18600663714" forKey:@"phone"];
-                [self.GuanJiaTop.yinxingData setValue:@"在线时间：8:00 - 20:00" forKey:@"time"];
-                [self.GuanJiaTop.yinxingData setValue:@"  金牌管家666  " forKey:@"position"];
+//                self.GuanJiaTop.yinxingData = [NSMutableDictionary dictionaryWithObject:[yinxingData objectForKey:@"phone"] forKey:@"phone"];
+//                NSString *time = [NSString stringWithFormat:@"在线时间：%@",[yinxingData objectForKey:@"grjj"] ];
+//                [self.GuanJiaTop.yinxingData setValue:time forKey:@"time"];
+//                [self.GuanJiaTop.yinxingData setValue:[yinxingData objectForKey:@"grjj"] forKey:@"position"];
+            }else if([self.viewModel.dataList[_loc1].userID isEqualToString:@"wsys_01"]){
+                //取消系统通知
             }else{
                 NSLog(@"userID:%@",self.viewModel.dataList[_loc1].userID);
                 [list addObject:self.viewModel.dataList[_loc1]];
@@ -150,8 +168,8 @@ static NSString *kConversationCell_ReuseId = @"TConversationCell";
 
     [self setupViews];
 
-    self.navigationController.interactivePopGestureRecognizer.enabled = YES;
-    self.navigationController.interactivePopGestureRecognizer.delegate = self;
+//    self.navigationController.interactivePopGestureRecognizer.enabled = YES;
+//    self.navigationController.interactivePopGestureRecognizer.delegate = self;
 }
 
 - (void)dealloc {

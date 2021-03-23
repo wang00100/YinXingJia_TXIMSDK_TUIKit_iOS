@@ -15,6 +15,8 @@
 #import "TIMMessage+DataProvider.h"
 #import "UIColor+TUIDarkMode.h"
 #import "NSBundle+TUIKIT.h"
+#import <objc/runtime.h>
+
 
 @import ImSDK;
 
@@ -25,6 +27,18 @@
 @end
 
 @implementation TConversationListViewModel
+
+static char filterListKey;
+
++(void)setFilterArray:(NSArray * _Nonnull)filterList
+{
+    objc_setAssociatedObject(self, &filterListKey, filterList, OBJC_ASSOCIATION_COPY_NONATOMIC);
+}
+
++( NSArray * _Nullable )getFilterArray
+{
+    return objc_getAssociatedObject(self, &filterListKey);
+}
 
 - (instancetype)init
 {
@@ -81,7 +95,13 @@
 //    [[V2TIMConversation alloc] init]
 //    [list addObject:(nonnull V2TIMConversation *)]
     //管家列表 包括主管家
-    NSMutableArray *gjList = [NSMutableArray arrayWithObjects:@"c2c_u18611416847",@"c2c_u18600663714",@"wsys_01",nil];
+    NSArray *filterArr = [TConversationListViewModel getFilterArray];
+    NSMutableArray *gjList = [NSMutableArray array];
+    for (int _loc1 = 0; _loc1 < filterArr.count; _loc1 ++) {
+        [gjList addObject:[NSString stringWithFormat:@"c2c_w%@",[filterArr[_loc1] objectForKey:@"zgid"]]];
+    }
+    [gjList addObject:@"c2c_wsys_01"];
+//    WithObjects:@"c2c_u18611416847",@"c2c_u18600663714",nil];
 //    NSArray<V2TIMConversation *> *list = [NSArray array];
 //    for (int _loc2 = 0; _loc2 < gjList.count; _loc2 ++) {
 //        [self loadConversationCustom:gjList[_loc2] with:list];
@@ -90,7 +110,10 @@
     
     [[V2TIMManager sharedInstance] getConversationList:0 count:INT_MAX succ:^(NSArray<V2TIMConversation *> *list, uint64_t lastTS, BOOL isFinished) {
         @strongify(self)
-        [self updateConversation:list];
+        
+        
+        
+        
 
         NSMutableArray *listM = [[NSMutableArray alloc] initWithArray:list];
         for (int _loc1 = 0; _loc1 < list.count; _loc1 ++) {
@@ -99,14 +122,18 @@
             if (index >= 0 && index < 9223372036854775807){
                 //排除已有的管家 不需要再次加载
                 [gjList removeObjectAtIndex:index];
-            }else{
+                
+            }else{ //非管家
                 if ( list[_loc1].type == 1 ){
                     //去掉非群组 又 不是管家的用户
-//                    [listM removeObject:list[_loc1]];
+                    [listM removeObject:list[_loc1]];
                 }
             }
             
         }
+        
+        [self updateConversation:listM];
+        
         //加载无聊天记录的管家
         for (int _loc2 = 0; _loc2 < gjList.count; _loc2 ++) {
             [self loadConversationCustom:gjList[_loc2] with:list];
@@ -120,13 +147,6 @@
 -(void)loadConversationCustom:(NSString *)gjID with:(NSArray *)list
 {
     [[V2TIMManager sharedInstance] getConversation:gjID succ:^(V2TIMConversation *conv) {
-        NSMutableArray<V2TIMConversation *> *listT = [[NSMutableArray alloc] initWithArray:list];
-        [listT addObject:conv];
-        [self updateConversation:listT];
-    } fail:^(int code, NSString *desc) {
-        
-    }];
-    [[V2TIMManager sharedInstance] getConversation:@"c2c_u18611416847" succ:^(V2TIMConversation *conv) {
         NSMutableArray<V2TIMConversation *> *listT = [[NSMutableArray alloc] initWithArray:list];
         [listT addObject:conv];
         [self updateConversation:listT];
@@ -155,6 +175,7 @@
     }
     // 更新 cell data
     NSMutableArray *dataList = [NSMutableArray array];
+    NSArray *filterArr = [TConversationListViewModel getFilterArray];
     for (V2TIMConversation *conv in self.localConvList) {
         // 屏蔽会话
         if ([self filteConversation:conv]) {
@@ -163,6 +184,16 @@
         
         // 创建cellData
         TUIConversationCellData *data = [[TUIConversationCellData alloc] init];
+        
+        //插入数据 bu vince
+        [filterArr enumerateObjectsUsingBlock:^(NSMutableDictionary *  _Nonnull obj, NSUInteger idx, BOOL * _Nonnull stop) {
+            NSString *tName = [NSString stringWithFormat:@"w%@",[obj objectForKey:@"zgid"]];
+            if ([tName isEqualToString:conv.userID]){
+                data.yinxingData = obj;
+            }
+        }];
+//        data.yinxingData = conv.yinxingData;
+        
         data.conversationID = conv.conversationID;
         data.groupID = conv.groupID;
         data.userID = conv.userID;

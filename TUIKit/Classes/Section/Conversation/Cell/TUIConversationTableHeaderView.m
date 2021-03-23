@@ -128,7 +128,7 @@
 //    self.subTitleLabel.attributedText = convData.subTitle;
     if ([convData.yinxingData objectForKey:@"time"] != nil){
         self.subTitleLabel.text = [convData.yinxingData objectForKey:@"time"];
-        self.titleLabel2.text = [convData.yinxingData objectForKey:@"position"];
+        self.titleLabel2.text = [NSString stringWithFormat:@"  %@  ",[convData.yinxingData objectForKey:@"grjj"]];
     }
     
     //add by vince
