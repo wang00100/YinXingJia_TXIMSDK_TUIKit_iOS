@@ -5,7 +5,7 @@
 //  Created by annidyfeng on 2019/5/21.
 //
 
-#import "TUIChatController.h"
+#import "TUIChatSysMessageController.h"
 #import "THeader.h"
 #import <MobileCoreServices/MobileCoreServices.h>
 #import <AVFoundation/AVFoundation.h>
@@ -30,7 +30,7 @@
 #import "TUIGroupLiveMessageCell.h"
 #import "NSBundle+TUIKIT.h"
 
-@interface TUIChatController () <TMessageControllerDelegate, TInputControllerDelegate, UIImagePickerControllerDelegate, UIDocumentPickerDelegate, UINavigationControllerDelegate>
+@interface TUIChatSysMessageController () <TMessageControllerDelegate, TInputControllerDelegate, UIImagePickerControllerDelegate, UIDocumentPickerDelegate, UINavigationControllerDelegate>
 @property (nonatomic, strong) TUIConversationCellData *conversationData;
 @property (nonatomic, strong) UIView *tipsView;
 @property (nonatomic, strong) UILabel *pendencyLabel;
@@ -41,7 +41,7 @@
 @property (nonatomic, assign) BOOL responseKeyboard;
 @end
 
-@implementation TUIChatController
+@implementation TUIChatSysMessageController
 
 - (instancetype)initWithConversation:(TUIConversationCellData *)conversationData;
 {
@@ -118,8 +118,6 @@
     [self addChildViewController:_inputController];
     [self.view addSubview:_inputController.view];
     _inputController.inputBar.inputTextView.text = self.conversationData.draftText;
-    _inputController.view.hidden = self.isSystem;
-    
     self.tipsView = [[UIView alloc] initWithFrame:CGRectZero];
     self.tipsView.backgroundColor = RGB(246, 234, 190);
     [self.view addSubview:self.tipsView];
@@ -170,11 +168,6 @@
 //        [self.atBtn addTarget:self action:@selector(loadMessageToAT) forControlEvents:UIControlEventTouchUpInside];
 //        [self.view addSubview:_atBtn];
 //    }
-}
-
--(void)setIsSystem:(BOOL)isSystem{
-    _isSystem = isSystem;
-    self.inputController.view.hidden = isSystem;
 }
 
 - (void)getPendencyList

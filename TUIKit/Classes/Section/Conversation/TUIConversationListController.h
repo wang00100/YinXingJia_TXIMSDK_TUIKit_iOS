@@ -72,6 +72,9 @@ NS_ASSUME_NONNULL_BEGIN
  *  视图模型能够协助消息列表界面实现数据的加载、移除、过滤等多种功能。替界面分摊部分的业务逻辑运算。
  */
 @property (nonatomic, strong) TConversationListViewModel *viewModel;
+@property (nonatomic, strong) NSMutableArray<TUIConversationCellData *> *viewModelPerson;
+@property (nonatomic, strong) NSMutableArray<TUIConversationCellData *> *viewModelGroup;
+@property (nonatomic, strong) TUIConversationCellData *GuanJiaTop;
 
 @end
 

@@ -49,7 +49,7 @@
     _memberCollectionView.showsHorizontalScrollIndicator = NO;
     _memberCollectionView.showsVerticalScrollIndicator = NO;
     _memberCollectionView.backgroundColor = self.backgroundColor;
-    [self.contentView addSubview:_memberCollectionView];
+    [self addSubview:_memberCollectionView];
     [self setSeparatorInset:UIEdgeInsetsMake(0, TGroupMembersCell_Margin, 0, 0)];
     [self setSelectionStyle:UITableViewCellSelectionStyleNone];
 }

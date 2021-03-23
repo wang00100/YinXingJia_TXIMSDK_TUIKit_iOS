@@ -29,6 +29,12 @@ NS_ASSUME_NONNULL_BEGIN
 @interface TUIConversationCellData : TCommonCellData
 
 /**
+ *  银杏家数据
+ *  通过 swift 送过来
+ */
+@property (nonatomic, strong) NSMutableDictionary *yinxingData;
+
+/**
  *  会话唯一 ID
  */
 @property (nonatomic, strong) NSString *conversationID;

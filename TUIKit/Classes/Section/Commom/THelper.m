@@ -24,8 +24,7 @@
     NSInteger sdkAppId = [TUIKit sharedInstance].sdkAppId;
     NSString *identifier = [[V2TIMManager sharedInstance] getLoginUser];
     if(uuid == nil){
-        int value = arc4random() % 1000;
-        uuid = [NSString stringWithFormat:@"%ld_%d", (long)[[NSDate date] timeIntervalSince1970], value];
+        uuid = [NSString stringWithFormat:@"%ld", (long)[[NSDate date] timeIntervalSince1970]];
     }
     NSString *name = [NSString stringWithFormat:@"%ld_%@_image_%@", (long)sdkAppId, identifier, uuid];
     return name;

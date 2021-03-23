@@ -76,11 +76,62 @@
 - (void)loadConversation
 {
     @weakify(self)
+//    NSMutableArray<V2TIMConversation *> *list = [NSMutableArray array];
+//
+//    [[V2TIMConversation alloc] init]
+//    [list addObject:(nonnull V2TIMConversation *)]
+    //管家列表 包括主管家
+    NSMutableArray *gjList = [NSMutableArray arrayWithObjects:@"c2c_u18611416847",@"c2c_u18600663714",@"wsys_01",nil];
+//    NSArray<V2TIMConversation *> *list = [NSArray array];
+//    for (int _loc2 = 0; _loc2 < gjList.count; _loc2 ++) {
+//        [self loadConversationCustom:gjList[_loc2] with:list];
+//    }
+    
+    
     [[V2TIMManager sharedInstance] getConversationList:0 count:INT_MAX succ:^(NSArray<V2TIMConversation *> *list, uint64_t lastTS, BOOL isFinished) {
         @strongify(self)
         [self updateConversation:list];
+
+        NSMutableArray *listM = [[NSMutableArray alloc] initWithArray:list];
+        for (int _loc1 = 0; _loc1 < list.count; _loc1 ++) {
+            NSString *conversationID = [list[_loc1] conversationID];
+            NSInteger index = [gjList indexOfObject:conversationID];
+            if (index >= 0 && index < 9223372036854775807){
+                //排除已有的管家 不需要再次加载
+                [gjList removeObjectAtIndex:index];
+            }else{
+                if ( list[_loc1].type == 1 ){
+                    //去掉非群组 又 不是管家的用户
+//                    [listM removeObject:list[_loc1]];
+                }
+            }
+            
+        }
+        //加载无聊天记录的管家
+        for (int _loc2 = 0; _loc2 < gjList.count; _loc2 ++) {
+            [self loadConversationCustom:gjList[_loc2] with:list];
+        }
+
     } fail:^(int code, NSString *msg) {
         // 拉取会话列表失败
+    }];
+}
+
+-(void)loadConversationCustom:(NSString *)gjID with:(NSArray *)list
+{
+    [[V2TIMManager sharedInstance] getConversation:gjID succ:^(V2TIMConversation *conv) {
+        NSMutableArray<V2TIMConversation *> *listT = [[NSMutableArray alloc] initWithArray:list];
+        [listT addObject:conv];
+        [self updateConversation:listT];
+    } fail:^(int code, NSString *desc) {
+        
+    }];
+    [[V2TIMManager sharedInstance] getConversation:@"c2c_u18611416847" succ:^(V2TIMConversation *conv) {
+        NSMutableArray<V2TIMConversation *> *listT = [[NSMutableArray alloc] initWithArray:list];
+        [listT addObject:conv];
+        [self updateConversation:listT];
+    } fail:^(int code, NSString *desc) {
+        
     }];
 }
 
@@ -147,29 +198,29 @@
     }
     
     // 屏蔽异常会话
-    if ([self getLastDisplayString:conv] == nil || [self getLastDisplayDate:conv] == nil) {
-        if (conv.unreadCount != 0) {
-            // 修复 在某种情况下会出现data.time为nil且还有未读会话的情况，实际上是lastMessage为空(v1conv的lastmessage)，导致出现界面不显示当前会话，聊天界面却显示未读的情况
-            // 如果碰到这种情况，直接设置成已读
-            NSString *userID = conv.userID;
-            if (userID.length > 0) {
-                [[V2TIMManager sharedInstance] markC2CMessageAsRead:userID succ:^{
-                    
-                } fail:^(int code, NSString *msg) {
-                    
-                }];
-            }
-            NSString *groupID = conv.groupID;
-            if (groupID.length > 0) {
-                [[V2TIMManager sharedInstance] markGroupMessageAsRead:groupID succ:^{
-                    
-                } fail:^(int code, NSString *msg) {
-                    
-                }];
-            }
-        }
-        return YES;
-    }
+//    if ([self getLastDisplayString:conv] == nil || [self getLastDisplayDate:conv] == nil) {
+//        if (conv.unreadCount != 0) {
+//            // 修复 在某种情况下会出现data.time为nil且还有未读会话的情况，实际上是lastMessage为空(v1conv的lastmessage)，导致出现界面不显示当前会话，聊天界面却显示未读的情况
+//            // 如果碰到这种情况，直接设置成已读
+//            NSString *userID = conv.userID;
+//            if (userID.length > 0) {
+//                [[V2TIMManager sharedInstance] markC2CMessageAsRead:userID succ:^{
+//
+//                } fail:^(int code, NSString *msg) {
+//
+//                }];
+//            }
+//            NSString *groupID = conv.groupID;
+//            if (groupID.length > 0) {
+//                [[V2TIMManager sharedInstance] markGroupMessageAsRead:groupID succ:^{
+//
+//                } fail:^(int code, NSString *msg) {
+//
+//                }];
+//            }
+//        }
+//        return YES;
+//    }
     
     return NO;
 }

@@ -26,13 +26,13 @@
     _head = [[UIImageView alloc] init];
     _head.layer.cornerRadius = 5;
     [_head.layer setMasksToBounds:YES];
-    [self.contentView addSubview:_head];
+    [self addSubview:_head];
 
     _name = [[UILabel alloc] init];
     [_name setFont:[UIFont systemFontOfSize:13]];
     [_name setTextColor:[UIColor grayColor]];
     _name.textAlignment = NSTextAlignmentCenter;
-    [self.contentView addSubview:_name];
+    [self addSubview:_name];
 }
 
 - (void)defaultLayout

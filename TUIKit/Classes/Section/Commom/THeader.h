@@ -344,4 +344,11 @@
 #define kRichCellValueColor [UIColor grayColor]
 #define kRichCellTextFont      [UIFont systemFontOfSize:14]
 
+
+//add by vince
+
+#define ScreenWidthScale UIScreen.mainScreen.bounds.size.width / 375.0f
+
+//add by vince
+
 #endif /* THeader_h */

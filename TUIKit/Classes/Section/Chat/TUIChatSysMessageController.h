@@ -16,129 +16,8 @@
 #import "TUIInputController.h"
 #import "TUIMessageController.h"
 #import "TUIConversationCell.h"
+#import "TUIChatController.h"
 
-@class TUIChatController;
-
-
-/////////////////////////////////////////////////////////////////////////////////
-//
-//                         TUIChatControllerDelegate
-//
-/////////////////////////////////////////////////////////////////////////////////
-
-/**
- *  TUIChatControllerDelegate 协议
- *  此协议旨在帮助开发者根据自身需求实现自定义消息。
- *  自定义消息的的具体实现方法，请参照链接 https://github.com/tencentyun/TIMSDK/wiki/TUIKit-iOS%E8%87%AA%E5%AE%9A%E4%B9%89%E6%B6%88%E6%81%AF
- */
-@protocol TUIChatControllerDelegate <NSObject>
-
-/**
- *  发送新消息时的回调
- *
- *  @param controller 委托者，当前聊天控制器。
- *  @param msgCellData TUIMessageCellData 即将发送的 msgCellData 。
- */
-- (void)chatController:(TUIChatController *)controller didSendMessage:(TUIMessageCellData *)msgCellData;
-
-/**
- *  接收新消息时的回调，用于甄别自定义消息
- *
- *  每条新消息在进入气泡展示区之前，都会通过 onNewMessage() 通知给您的代码。
- *  - 如果您返回 nil，TUIChatController 会认为该条消息非自定义消息，会将其按照普通消息的处理流程进行处理。
- *  - 如果您返回一个 TUIMessageCellData 类型的对象，TUIChatController 会在随后触发的 onShowMessageData() 回调里传入您返回的 cellData 对象。
- *
- *  也就是说，onNewMessage() 负责让您甄别自己的个性化消息，而 onShowMessageData() 回调则负责让您展示这条个性化消息。
- *
- * <pre>
- *  - (TUIMessageCellData *)chatController:(TUIChatController *)controller onNewMessage:(TIMMessage *)msg
- *  {
- *     TIMElem *elem = [msg getElem:0];
- *     //判断是否为自定义元素。
- *     if([elem isKindOfClass:[TIMCustomElem class]]){
- *        MyCustomCellData *cellData = [[MyCustomCellData alloc] initWithDirection:msg.isSelf ? MsgDirectionOutgoing : MsgDirectionIncoming];
- *
- *        //MyCustomCellData 是您自定义的消息类型，假设它包含 text 和 link 两个字段
- *        //此处省略从 elem 解析出自定义数据的代码段
- *
- *        cellData.text = @"这是我的自定义消息";
- *        cellData.link = @"www.qq.com";
- *        return cellData;
- *     }
- *     return nil;
- *  }
- * </pre>
- *
- *  @param controller 委托者，当前聊天控制器。
- *  @param msg 接收到的新消息，在此回调中，特指包含您自定义消息类型的消息元素。
- *  @return 返回一个消息单元数据源，此数据源为您自定义的消息数据源，继承自 TUIMessageCellData。当接收到的消息不是您的自定义消息时，您可以返回 nil。
- */
-- (TUIMessageCellData *)chatController:(TUIChatController *)controller onNewMessage:(V2TIMMessage *)msg;
-
-/**
- * 展示自定义个性化消息
- *
- * 您可以通过重载 onShowMessageData() 改变消息气泡的默认展示逻辑，只需要返回一个自定义的 TUIMessageCell 对象即可。
- *
- * <pre>
- *  - (TUIMessageCell *)chatController:(TUIChatController *)controller onShowMessageData:(TUIMessageCellData *)data
- *  {
- *      //判定当前传入数据源是否为自定义消息的数据源
- *      if ([data isKindOfClass:[MyCustomCellData class]]) {
- *          MyCustomCell *myCell = [[MyCustomCell alloc] initWithStyle:UITableViewCellStyleDefault reuseIdentifier:@"MyCell"];
- *          [myCell fillWithData:(MyCustomCellData *)data];
- *          return myCell;
- *      }
- *      return nil;
- *  }
- * </pre>
- *
- *  在上述代码中，当我们判定待显示的数据源为自定义数据源时，我们便实例化 MyCustomCell，并通过传入的 data 进行初始化，并将 MyCustomCell 作为返回值返回。
- *  当我们判断传入的数据并非自定义数据源时，我们可以返回 nil。
- *  需要注意的是，在此处的 MyCustomCell 在此处略过了具体的声明与实现。如果您对自定义消息单元的声明与实现有疑问的话，请参考本协议声明时，注释中给出的链接。
- *
- *  @param controller 委托者，当前聊天控制器。
- *  @param cellData 即将显示的消息单元的数据源，在此回调中，特指您自定义的消息数据源。
- *
- *  @return 返回一个即将显示的消息单元，此消息单元为您自定义的消息单元，继承自 TUIMessageCell。当接收到的消息不是您的自定义消息时，您可以返回空。
- */
-- (TUIMessageCell *)chatController:(TUIChatController *)controller onShowMessageData:(TUIMessageCellData *)cellData;
-
-/**
- *  点击某一“更多”单元的回调委托。
- *  当您点击某一“更多”单元后回执行该回调，您可以通过该回调实现对“更多”视图的定制。
- *  比如您在更多视图4个单元的基础上，添加了一个名为 myMoreCell 的第5个单元，则您可以按下列代码实现该自定义单元的响应回调。
- * <pre>
- *  - (void)chatController:(TUIChatController *)chatController onSelectMoreCell:(TUIInputMoreCell *)cell{
- *      if ([cell.data.title isEqualToString:@"myMoreCell"]) {
- *       //Do something
- *      }
- *  }
- *</pre>
- *
- *  @param chatController 委托者，当前聊天控制器。
- *  @param cell 被点击的“更多”单元，在此回调中特指您自定义的“更多”单元。
- */
-- (void)chatController:(TUIChatController *)chatController onSelectMoreCell:(TUIInputMoreCell *)cell;
-
-/**
- *  点击消息头像回调
- *  默认点击头像是打开联系人资料页，如果您实现了此方法，则内部不做任何处理
- *
- *  @param controller 会话对象
- *  @param cell 所点击的消息单元
- */
-- (void)chatController:(TUIChatController *)controller onSelectMessageAvatar:(TUIMessageCell *)cell;
-
-/**
- *  点击消息内容回调
- *
- *  @param controller 会话对象
- *  @param cell 所点击的消息单元
- */
-- (void)chatController:(TUIChatController *)controller onSelectMessageContent:(TUIMessageCell *)cell;
-
-@end
 
 
 /////////////////////////////////////////////////////////////////////////////////
@@ -162,10 +41,7 @@
  *  A: 如果您想要实现 TUIKit 不支持的消息气泡样式，比如在消息气泡中添加投票链接等，可以参考文档：
  *     https://github.com/tencentyun/TIMSDK/wiki/TUIKit-iOS%E8%87%AA%E5%AE%9A%E4%B9%89%E6%B6%88%E6%81%AF
  */
-@interface TUIChatController : UIViewController
-
-//add by vince
-@property (nonatomic) BOOL isSystem;
+@interface TUIChatSysMessageController : UIViewController
 
 //********************************
 @property TUnReadView *unRead;
