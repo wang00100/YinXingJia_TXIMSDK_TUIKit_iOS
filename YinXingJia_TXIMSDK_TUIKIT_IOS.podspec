@@ -150,7 +150,7 @@ Pod::Spec.new do |spec|
   spec.dependency 'RxCocoa','5.1.1'
   spec.dependency 'NVActivityIndicatorView','4.8.0'
   spec.dependency 'Material','3.1.8'
-  spec.dependency 'Alamofire','4.9.1'
+  spec.dependency 'Alamofire','5.4.1'
   spec.dependency 'TXLiteAVSDK_TRTC','7.3.9138'
   spec.dependency 'TXIMSDK_iOS','4.8.50'
   spec.dependency 'TZImagePickerController'
