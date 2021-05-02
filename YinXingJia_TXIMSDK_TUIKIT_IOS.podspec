@@ -16,7 +16,7 @@ Pod::Spec.new do |spec|
   #
 
   spec.name         = "YinXingJia_TXIMSDK_TUIKit_iOS"
-  spec.version      = "0.1.2"
+  spec.version      = "0.1.3"
   spec.summary      = "YinXingJia_TXIMSDK_TUIKit_iOS"
 
 
@@ -25,7 +25,7 @@ Pod::Spec.new do |spec|
   #   * Try to keep it short, snappy and to the point.
   #   * Write the description between the DESC delimiters below.
   #   * Finally, don't worry about the indent, CocoaPods strips it!
-  spec.description  = "a new version of YinXingJia_TXIMSDK_TUIKit_iOS"
+  spec.description  = "补充语言文件"
 
   spec.homepage     = "https://github.com/wang00100/YinXingJia_TXIMSDK_TUIKit_iOS"
   # spec.screenshots  = "www.example.com/screenshots_1.gif", "www.example.com/screenshots_2.gif"
