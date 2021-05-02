@@ -93,7 +93,7 @@ Pod::Spec.new do |spec|
 
   spec.source_files = 'TUIKit/Classes/**/*.{h,m,mm,swift}'
   spec.vendored_libraries = ['TUIKit/Classes/third/voiceConvert/opencore-amrnb/libopencore-amrnb.a', 'TUIKit/Classes/third/voiceConvert/opencore-amrwb/libopencore-amrwb.a']
-  spec.resource = ['TUIKit/Resources/TUIKitFace.bundle','TUIKit/Resources/TUIKitResource.bundle']
+  spec.resource = ['TUIKit/Resources/TUIKitFace.bundle','TUIKit/Resources/TUIKitResource.bundle','TUIKit/Resources/Localizable/zh-Hans.lproj','TUIKit/Resources/Localizable/en.lproj']
 
   # spec.public_header_files = "Classes/**/*.h"
 
