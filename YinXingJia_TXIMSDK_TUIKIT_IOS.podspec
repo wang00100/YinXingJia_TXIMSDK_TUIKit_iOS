@@ -16,7 +16,7 @@ Pod::Spec.new do |spec|
   #
 
   spec.name         = "YinXingJia_TXIMSDK_TUIKit_iOS"
-  spec.version      = "0.1.3"
+  spec.version      = "0.1.4"
   spec.summary      = "YinXingJia_TXIMSDK_TUIKit_iOS"
 
 

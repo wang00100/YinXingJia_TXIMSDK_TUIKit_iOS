@@ -63,6 +63,11 @@
 
     self.timeLabel.text = [convData.time tk_messageString];
     self.subTitleLabel.attributedText = convData.subTitle;
+    //add by vince
+    if (convData.subTitle == nil){
+        self.subTitleLabel.attributedText = [[NSMutableAttributedString alloc] initWithString:@"暂无消息"];
+    }
+    
     [self.unReadView setNum:convData.unreadCount];
 
     if (convData.isOnTop) {

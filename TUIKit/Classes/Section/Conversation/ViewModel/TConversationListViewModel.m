@@ -142,13 +142,17 @@ static char filterListKey;
     } fail:^(int code, NSString *msg) {
         // 拉取会话列表失败
     }];
+    
 }
 
 -(void)loadConversationCustom:(NSString *)gjID with:(NSArray *)list
 {
+    
     [[V2TIMManager sharedInstance] getConversation:gjID succ:^(V2TIMConversation *conv) {
         NSMutableArray<V2TIMConversation *> *listT = [[NSMutableArray alloc] initWithArray:list];
         [listT addObject:conv];
+        __weak V2TIMConversation *__weak_conv = conv;
+        
         [self updateConversation:listT];
     } fail:^(int code, NSString *desc) {
         
@@ -193,7 +197,6 @@ static char filterListKey;
             }
         }];
 //        data.yinxingData = conv.yinxingData;
-        
         data.conversationID = conv.conversationID;
         data.groupID = conv.groupID;
         data.userID = conv.userID;
@@ -211,6 +214,17 @@ static char filterListKey;
         } else {
             data.avatarImage = DefaultGroupAvatarImage;
         }
+//        __weak TUIConversationCellData *_weak_data = data;
+//        printf(data.userID);
+//        if (data.userID){
+//            NSLog(@"%@",data.userID);
+//            NSArray *infoData = [NSArray arrayWithObject:data.userID];
+//            [V2TIMManager.sharedInstance getUsersInfo:infoData succ:^(NSArray<V2TIMUserFullInfo *> *infoList) {
+//                
+//            } fail:^(int code, NSString *desc) {
+//                data.unregistered = YES;
+//            }];
+//        }
         
         [dataList addObject:data];
     }

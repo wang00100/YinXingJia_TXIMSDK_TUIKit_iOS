@@ -258,16 +258,16 @@ static NSString *kConversationCell_ReuseId = @"TConversationCell";
 }
 
 //关闭了删除功能
-- (void)tableView:(UITableView *)tableView commitEditingStyle:(UITableViewCellEditingStyle)editingStyle forRowAtIndexPath:(NSIndexPath *)indexPath
-{
-    if (editingStyle == UITableViewCellEditingStyleDelete) {
-        [tableView beginUpdates];
-        TUIConversationCellData *conv = self.viewModel.dataList[indexPath.row];
-        [self.viewModel removeData:conv];
-        [tableView deleteRowsAtIndexPaths:[NSArray arrayWithObjects:indexPath, nil] withRowAnimation:UITableViewRowAnimationNone];
-        [tableView endUpdates];
-    }
-}
+//- (void)tableView:(UITableView *)tableView commitEditingStyle:(UITableViewCellEditingStyle)editingStyle forRowAtIndexPath:(NSIndexPath *)indexPath
+//{
+//    if (editingStyle == UITableViewCellEditingStyleDelete) {
+//        [tableView beginUpdates];
+//        TUIConversationCellData *conv = self.viewModel.dataList[indexPath.row];
+//        [self.viewModel removeData:conv];
+//        [tableView deleteRowsAtIndexPaths:[NSArray arrayWithObjects:indexPath, nil] withRowAnimation:UITableViewRowAnimationNone];
+//        [tableView endUpdates];
+//    }
+//}
 
 - (void)didSelectConversation:(TUIConversationCell *)cell
 {

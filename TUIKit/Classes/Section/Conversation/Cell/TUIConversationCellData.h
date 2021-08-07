@@ -34,6 +34,8 @@ NS_ASSUME_NONNULL_BEGIN
  */
 @property (nonatomic, strong) NSMutableDictionary *yinxingData;
 
+@property (nonatomic, assign) BOOL unregistered; //未注册用户
+
 /**
  *  会话唯一 ID
  */
